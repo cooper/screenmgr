@@ -17,14 +17,14 @@ func findDevices() error {
 		fmt.Printf("found file: %+v\n", fileInfo)
 		dev := deviceWithID(fileInfo.Name())
 
-        // read the device info
+		// read the device info
 		if err := dev.readInfo(); err != nil {
-            reportError("Read JSON info", err)
-            continue
-        }
+			reportError("Read JSON info", err)
+			continue
+		}
 
-        // update device
-        updateDevice(dev)
+		// update device
+		updateDevice(dev)
 
 	}
 
@@ -34,5 +34,5 @@ func findDevices() error {
 // update the device in devices list with this device object,
 // maybe preserving whatever we have already?
 func updateDevice(dev *device) {
-    devices[dev.deviceID] = dev
+	devices[dev.deviceID] = dev
 }

@@ -10,6 +10,6 @@ func runHTTPServer() error {
 
 func httpHandler(w http.ResponseWriter, r *http.Request) {
 	for _, dev := range devices {
-			w.Write([]byte(fmt.Sprintf("%+v\n", dev)))
+		w.Write([]byte(fmt.Sprintf("%+v\n", dev)))
 	}
 }

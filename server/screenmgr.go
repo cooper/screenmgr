@@ -8,9 +8,9 @@ func Run() {
 }
 
 func reportError(action string, err error) {
-    if err != nil {
-        log.Println(action, " error: ", err.Error())
-    }
+	if err != nil {
+		log.Println(action, " error: ", err.Error())
+	}
 }
 
 func checkError(action string, err error) {
