@@ -16,7 +16,6 @@ type deviceInfo struct {
 type device struct {
 	deviceID string
 	info     deviceInfo
-	addr     net.IP
 }
 
 // create a new device and a directory for it
@@ -84,4 +83,9 @@ func (dev *device) writeInfo() error {
 		return err
 	}
 	return ioutil.WriteFile(dev.getInfoPath(), json, 0744)
+}
+
+// get IP
+func (dev *device) getIP() net.IP {
+	return net.ParseIP(dev.info.AddrString)
 }

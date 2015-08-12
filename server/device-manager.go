@@ -3,10 +3,10 @@ package server
 import "io/ioutil"
 import "fmt"
 
-var devices map[string]device
+var devices map[string]*device
 
 func init() {
-	devices = make(map[string]device)
+	devices = make(map[string]*device)
 }
 
 func findDevices() error {
@@ -20,10 +20,23 @@ func findDevices() error {
 	for _, fileInfo := range files {
 		fmt.Printf("found file: %+v\n", fileInfo)
 		dev := deviceWithID(fileInfo.Name())
-		checkError("Read JSON", dev.readInfo())
-		fmt.Printf("device: %+v\n", dev)
-		fmt.Printf("info: %+v\n", dev.info)
+
+        // read the device info
+		if err := dev.readInfo(); err != nil {
+            reportError("Read JSON info", err)
+            continue
+        }
+
+        // update device
+        updateDevice(dev)
+
 	}
 
 	return nil
+}
+
+// update the device in devices list with this device object,
+// maybe preserving whatever we have already?
+func updateDevice(dev *device) {
+    devices[dev.deviceID] = dev
 }
