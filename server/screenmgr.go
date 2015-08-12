@@ -4,7 +4,7 @@ import "log"
 
 func Run() {
 	checkError("Find devices", findDevices())
-	checkError("Start HTTP server", runHTTPServer())
+	checkError("Run HTTP server", runHTTPServer())
 }
 
 func reportError(action string, err error) {
