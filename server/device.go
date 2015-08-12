@@ -8,9 +8,9 @@ import (
 )
 
 type deviceInfo struct {
-	productLine string
-	nickname    string
-	addrString  string
+	ProductLine string
+	Nickname    string
+	AddrString  string
 }
 
 type device struct {
@@ -28,7 +28,8 @@ func newDevice(deviceID string, info deviceInfo) (dev *device, err error) {
 	}
 
 	// create the device object
-	dev = deviceFromInfo(deviceID, info)
+	dev = deviceWithID(deviceID)
+	dev.info = info
 
 	// write the device data
 	if err = dev.writeInfo(); err != nil {
@@ -38,14 +39,13 @@ func newDevice(deviceID string, info deviceInfo) (dev *device, err error) {
 	return
 }
 
-func deviceFromInfo(deviceID string, info deviceInfo) *device {
-	return &device{}
-	// TODO: parse IP here
+func deviceWithID(deviceID string) *device {
+	return &device{deviceID: deviceID}
 }
 
 // returns a directory for a device ID
 func deviceDirectoryForID(deviceID string) string {
-	return "devices/" + deviceID + ".device"
+	return "devices/" + deviceID
 }
 
 // create a new device directory
@@ -63,6 +63,18 @@ func (dev *device) getDirectory() string {
 // get device info path
 func (dev *device) getInfoPath() string {
 	return dev.getDirectory() + "/info.json"
+}
+
+// read info from file
+func (dev *device) readInfo() error {
+	data, err := ioutil.ReadFile(dev.getInfoPath())
+	if err != nil {
+		return err
+	}
+	if err = json.Unmarshal(data, &dev.info); err != nil {
+		return err
+	}
+	return nil
 }
 
 // write info to file

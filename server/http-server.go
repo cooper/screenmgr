@@ -1,10 +1,7 @@
 package server
 
-import (
-	"log"
-	"net/http"
-)
+import "net/http"
 
-func runHTTPServer() {
-	log.Fatal(http.ListenAndServe(":8080", nil))
+func runHTTPServer() error {
+	return http.ListenAndServe(":8080", nil)
 }
