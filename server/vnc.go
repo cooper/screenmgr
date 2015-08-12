@@ -1,1 +1,5 @@
 package server
+
+func runVNCLoop() {
+
+}

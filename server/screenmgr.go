@@ -4,6 +4,7 @@ import "log"
 
 func Run() {
 	checkError("Find devices", findDevices())
+	go runVNCLoop()
 	checkError("Run HTTP server", runHTTPServer())
 }
 
