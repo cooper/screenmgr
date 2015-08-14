@@ -1,13 +1,15 @@
 package server
 
-import "net/http"
-import "fmt"
+import (
+	"net/http"
+	"fmt"
+)
 
 func runHTTPServer() error {
 
 	// server static files in devices directory
 	http.Handle("/devices/", http.StripPrefix("/devices/",
-		http.FileServer(http.Dir("./devices"))))
+		http.FileServer(http.Dir("devices"))))
 
 	// main handler
 	http.HandleFunc("/", httpHandler)

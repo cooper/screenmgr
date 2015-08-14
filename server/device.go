@@ -11,6 +11,7 @@ type deviceInfo struct {
 	ProductLine string
 	Nickname    string
 	AddrString  string
+	VNCEnabled  bool
 }
 
 type device struct {

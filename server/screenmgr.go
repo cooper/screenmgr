@@ -4,7 +4,7 @@ import "log"
 
 func Run() {
 	checkError("Find devices", findDevices())
-	go runVNCLoop()
+	go new(vncManager).run()
 	checkError("Run HTTP server", runHTTPServer())
 }
 
