@@ -5,6 +5,14 @@ import "fmt"
 
 var devices = make(map[string]*device)
 
+// setup callbacks
+type deviceSetupCallback func(dev *device) error
+var deviceSetupCallbacks []deviceSetupCallback
+
+func addDeviceSetupCallback(cb deviceSetupCallbacks) {
+	deviceSetupCallbacks = append(deviceSetupCallbacks, cb)
+}
+
 func findDevices() error {
 	files, err := ioutil.ReadDir("devices")
 
@@ -28,6 +36,16 @@ func findDevices() error {
 
 	}
 
+	return nil
+}
+
+func setupDevices() error {
+	for _, dev := range devices {
+		err := dev.setup()
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

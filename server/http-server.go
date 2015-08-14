@@ -8,6 +8,7 @@ import (
 func runHTTPServer() error {
 
 	// server static files in devices directory
+	// FIXME: this allows access to vnc passwd files
 	http.Handle("/devices/", http.StripPrefix("/devices/",
 		http.FileServer(http.Dir("devices"))))
 

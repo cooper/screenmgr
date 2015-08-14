@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"log"
 )
 
 type deviceInfo struct {
@@ -12,6 +13,7 @@ type deviceInfo struct {
 	Nickname    string
 	AddrString  string
 	VNCEnabled  bool
+	VNCPassword string
 }
 
 type device struct {
@@ -60,14 +62,14 @@ func (dev *device) getDirectory() string {
 	return deviceDirectoryForID(dev.deviceID)
 }
 
-// get device info path
-func (dev *device) getInfoPath() string {
-	return dev.getDirectory() + "/info.json"
+// get device file path
+func (dev *device) getFilePath(fileName string) string {
+	return dev.getDirectory() + "/" + fileName
 }
 
 // read info from file
 func (dev *device) readInfo() error {
-	data, err := ioutil.ReadFile(dev.getInfoPath())
+	data, err := ioutil.ReadFile(dev.getFilePath("info.json"))
 	if err != nil {
 		return err
 	}
@@ -83,10 +85,26 @@ func (dev *device) writeInfo() error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(dev.getInfoPath(), json, 0744)
+	return ioutil.WriteFile(dev.getFilePath("info.json"), json, 0744)
 }
 
 // get IP
 func (dev *device) getIP() net.IP {
 	return net.ParseIP(dev.info.AddrString)
+}
+
+// log warning
+func (dev *device) warn(warning string) {
+	log.Printf("[%s] %s\n", dev.deviceID, warning)
+}
+
+// setup device for loops and scrunch
+func (dev *device) setup() error {
+	for _, cb := range deviceSetupCallbacks {
+		err := cb(dev)
+		if err != nil {
+			return nil
+		}
+	}
+	return nil
 }

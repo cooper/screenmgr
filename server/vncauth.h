@@ -33,4 +33,3 @@ extern char *vncDecryptPasswdFromFile(char *fname);
 extern void vncEncryptBytes(unsigned char *bytes, char *passwd);
 extern void vncEncryptPasswd(unsigned char *encryptedPasswd, char *passwd);
 extern char *vncDecryptPasswd(const unsigned char *encryptedPasswd);
-extern void test();
