@@ -9,7 +9,7 @@ var devices = make(map[string]*device)
 type deviceSetupCallback func(dev *device) error
 var deviceSetupCallbacks []deviceSetupCallback
 
-func addDeviceSetupCallback(cb deviceSetupCallbacks) {
+func addDeviceSetupCallback(cb deviceSetupCallback) {
 	deviceSetupCallbacks = append(deviceSetupCallbacks, cb)
 }
 

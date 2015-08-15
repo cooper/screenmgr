@@ -28,6 +28,8 @@
  * vncauth.h - describes the functions provided by the vncauth library.
  */
 
+#include "d3des.h"
+
 extern int vncEncryptAndStorePasswd(char *passwd, char *fname);
 extern char *vncDecryptPasswdFromFile(char *fname);
 extern void vncEncryptBytes(unsigned char *bytes, char *passwd);
