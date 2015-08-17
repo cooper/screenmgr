@@ -23,10 +23,6 @@ func runHTTPServer() error {
 	return http.ListenAndServe(":8080", nil)
 }
 
-type DevicePage struct {
-	Devices []*Device
-}
-
 func httpHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
@@ -40,6 +36,6 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 
 	// serve template
 	page := &DevicePage{devs}
-	checkError("template", templates.ExecuteTemplate(w, "index.html", page))
+	checkError("template", templates.ExecuteTemplate(w, "device-page.html", page))
 
 }
