@@ -16,14 +16,15 @@ type deviceInfo struct {
 	VNCPassword string
 }
 
-type device struct {
-	deviceID       string
-	info           deviceInfo
-	lastScreenshot string
+type Device struct {
+	DeviceID       string
+	Info           deviceInfo
+	LastScreenshot string
+	Online		   bool
 }
 
 // create a new device and a directory for it
-func newDevice(deviceID string, info deviceInfo) (dev *device, err error) {
+func newDevice(deviceID string, info deviceInfo) (dev *Device, err error) {
 
 	// create device directory
 	if err = os.Mkdir(deviceDirectoryForID(deviceID), 0744); err != nil {
@@ -32,7 +33,7 @@ func newDevice(deviceID string, info deviceInfo) (dev *device, err error) {
 
 	// create the device object
 	dev = deviceWithID(deviceID)
-	dev.info = info
+	dev.Info = info
 
 	// create screenshot directory
 	if err = os.Mkdir(dev.getFilePath("screenshots"), 0744); err != nil {
@@ -47,8 +48,8 @@ func newDevice(deviceID string, info deviceInfo) (dev *device, err error) {
 	return
 }
 
-func deviceWithID(deviceID string) *device {
-	return &device{deviceID: deviceID}
+func deviceWithID(deviceID string) *Device {
+	return &Device{DeviceID: deviceID}
 }
 
 // returns a directory for a device ID
@@ -59,30 +60,30 @@ func deviceDirectoryForID(deviceID string) string {
 // DEVICE METHODS
 
 // get device directory
-func (dev *device) getDirectory() string {
-	return deviceDirectoryForID(dev.deviceID)
+func (dev *Device) getDirectory() string {
+	return deviceDirectoryForID(dev.DeviceID)
 }
 
 // get device file path
-func (dev *device) getFilePath(fileName string) string {
+func (dev *Device) getFilePath(fileName string) string {
 	return dev.getDirectory() + "/" + fileName
 }
 
 // read info from file
-func (dev *device) readInfo() error {
+func (dev *Device) readInfo() error {
 	data, err := ioutil.ReadFile(dev.getFilePath("info.json"))
 	if err != nil {
 		return err
 	}
-	if err = json.Unmarshal(data, &dev.info); err != nil {
+	if err = json.Unmarshal(data, &dev.Info); err != nil {
 		return err
 	}
 	return nil
 }
 
 // write info to file
-func (dev *device) writeInfo() error {
-	json, err := json.Marshal(dev.info)
+func (dev *Device) writeInfo() error {
+	json, err := json.Marshal(dev.Info)
 	if err != nil {
 		return err
 	}
@@ -90,17 +91,17 @@ func (dev *device) writeInfo() error {
 }
 
 // get IP
-func (dev *device) getIP() net.IP {
-	return net.ParseIP(dev.info.AddrString)
+func (dev *Device) getIP() net.IP {
+	return net.ParseIP(dev.Info.AddrString)
 }
 
 // log warning
-func (dev *device) warn(warning string) {
-	log.Printf("[%s] %s\n", dev.deviceID, warning)
+func (dev *Device) warn(warning string) {
+	log.Printf("[%s] %s\n", dev.DeviceID, warning)
 }
 
 // setup device for loops and scrunch
-func (dev *device) setup() error {
+func (dev *Device) setup() error {
 	for _, cb := range deviceSetupCallbacks {
 		err := cb(dev)
 		if err != nil {

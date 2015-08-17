@@ -3,10 +3,10 @@ package server
 import "io/ioutil"
 import "fmt"
 
-var devices = make(map[string]*device)
+var devices = make(map[string]*Device)
 
 // setup callbacks
-type deviceSetupCallback func(dev *device) error
+type deviceSetupCallback func(dev *Device) error
 
 var deviceSetupCallbacks []deviceSetupCallback
 
@@ -52,6 +52,6 @@ func setupDevices() error {
 
 // update the device in devices list with this device object,
 // maybe preserving whatever we have already?
-func updateDevice(dev *device) {
-	devices[dev.deviceID] = dev
+func updateDevice(dev *Device) {
+	devices[dev.DeviceID] = dev
 }

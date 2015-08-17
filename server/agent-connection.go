@@ -12,7 +12,7 @@ type agentConn struct {
 	socket   net.Conn
 	incoming *bufio.Reader
 	id       int
-	device   *device
+	device   *Device
 }
 
 // create a new connection

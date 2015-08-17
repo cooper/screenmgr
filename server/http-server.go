@@ -1,11 +1,16 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
+	"html/template"
 )
 
+var templates *template.Template
+
 func runHTTPServer() error {
+
+	// initialize templates
+	templates = template.Must(template.ParseGlob("server/templates/*"))
 
 	// server static files in devices directory
 	// FIXME: this allows access to vnc passwd files
@@ -18,10 +23,23 @@ func runHTTPServer() error {
 	return http.ListenAndServe(":8080", nil)
 }
 
+type DevicePage struct {
+	Devices []*Device
+}
+
 func httpHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
+
+	// find online devices
+	devs := make([]*Device, 0, len(devices))
 	for _, dev := range devices {
-		w.Write([]byte(fmt.Sprintf("<pre>%+v</pre><br>", dev)))
-		w.Write([]byte(fmt.Sprintf(`<img src="devices/%s/screenshots/%s" />`, dev.deviceID, dev.lastScreenshot)))
+		if dev.Online {
+			devs = append(devs, dev)
+		}
 	}
+
+	// serve template
+	page := &DevicePage{devs}
+	checkError("template", templates.ExecuteTemplate(w, "index.html", page))
+
 }
