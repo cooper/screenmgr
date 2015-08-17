@@ -1,1 +1,21 @@
-<img src="devices/{{.DeviceID}}/screenshots/{{.LastScreenshot}}" />
+<div class="mac-container">
+    <div class="header">
+        <table>
+            <tr>
+                <td class="key">Model Name</td>
+                <td class="value">Something</td>
+            </tr>
+        </table>
+        <div class="icon">
+            <img style="height: 100%;" src="icons/something.png" alt="icon" />
+            <span>OS Version</span>
+        </div>
+        <h1>
+            {{.Info.ProductLine}}<br />
+            <a style="font-weight: normal;" href="#">{{.Info.Nickname}}</a>
+        </h1>
+    </div>
+    <div class="screenshot-container">
+        <img src="devices/{{.DeviceID}}/screenshots/{{.LastScreenshot}}" alt="{{.DeviceID}}" class="screenshot" />
+    </div>
+</div>
