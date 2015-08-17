@@ -26,13 +26,18 @@ type device struct {
 func newDevice(deviceID string, info deviceInfo) (dev *device, err error) {
 
 	// create device directory
-	if err = createDeviceDirectory(deviceID); err != nil {
+	if err = os.Mkdir(deviceDirectoryForID(deviceID), 0744); err != nil {
 		return
 	}
 
 	// create the device object
 	dev = deviceWithID(deviceID)
 	dev.info = info
+
+	// create screenshot directory
+	if err = os.Mkdir(dev.getFilePath("screenshots"), 0744); err != nil {
+		return
+	}
 
 	// write the device data
 	if err = dev.writeInfo(); err != nil {
@@ -49,11 +54,6 @@ func deviceWithID(deviceID string) *device {
 // returns a directory for a device ID
 func deviceDirectoryForID(deviceID string) string {
 	return "devices/" + deviceID
-}
-
-// create a new device directory
-func createDeviceDirectory(deviceID string) error {
-	return os.Mkdir(deviceDirectoryForID(deviceID), 0744)
 }
 
 // DEVICE METHODS

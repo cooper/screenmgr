@@ -19,7 +19,9 @@ func runHTTPServer() error {
 }
 
 func httpHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
 	for _, dev := range devices {
-		w.Write([]byte(fmt.Sprintf("%+v\n", dev)))
+		w.Write([]byte(fmt.Sprintf("<pre>%+v</pre><br>", dev)))
+		w.Write([]byte(fmt.Sprintf(`<img src="devices/%s/screenshots/%s" />`, dev.deviceID, dev.lastScreenshot)))
 	}
 }

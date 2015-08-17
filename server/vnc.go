@@ -57,7 +57,7 @@ func (vnc vncManager) deviceLoop(dev *device) {
 			"-fps", "5",
 			"-count", "50",
 			dev.info.AddrString,
-			dev.getFilePath("screenshot.jpg"),
+			dev.getFilePath("screenshots/screenshot.jpg"),
 		)
 
 		// get STDERR and make a scanner
@@ -85,6 +85,7 @@ func (vnc vncManager) deviceLoop(dev *device) {
 			continue
 		}
 
+        cmd.Wait()
 	}
 
 }
