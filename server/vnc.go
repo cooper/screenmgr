@@ -64,14 +64,14 @@ func (vnc vncManager) deviceLoop(dev *device) {
 		stderr, err := cmd.StderrPipe()
 		if err != nil {
 			tryLater("failed to get vncsnapshot STDERR pipe")
-			break
+			continue
 		}
 		scanner := bufio.NewScanner(stderr)
 
 		// start the command
 		if err = cmd.Start(); err != nil {
 			tryLater("vncsnapshot failed to start")
-			break
+			continue
 		}
 
 		// read from the scanner
@@ -82,10 +82,9 @@ func (vnc vncManager) deviceLoop(dev *device) {
 		// scanner error
 		if err := scanner.Err(); err != nil {
 			tryLater("Scanner terminated with error: " + err.Error())
-			break
+			continue
 		}
 
-		break
 	}
 
 }
