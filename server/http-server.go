@@ -12,10 +12,14 @@ func runHTTPServer() error {
 	// initialize templates
 	templates = template.Must(template.ParseGlob("server/templates/*"))
 
-	// server static files in devices directory
+	// serve static files in devices directory
 	// FIXME: this allows access to vnc passwd files
 	http.Handle("/devices/", http.StripPrefix("/devices/",
 		http.FileServer(http.Dir("devices"))))
+
+	// serve static files in resources directory
+	http.Handle("/resources/", http.StripPrefix("/resources/",
+		http.FileServer(http.Dir("resources"))))
 
 	// main handler
 	http.HandleFunc("/", httpHandler)
