@@ -7,6 +7,7 @@ var devices = make(map[string]*device)
 
 // setup callbacks
 type deviceSetupCallback func(dev *device) error
+
 var deviceSetupCallbacks []deviceSetupCallback
 
 func addDeviceSetupCallback(cb deviceSetupCallback) {

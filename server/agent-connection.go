@@ -9,14 +9,14 @@ import (
 var currentAgentId int = 0
 
 type agentConn struct {
-	socket   *net.UnixConn
+	socket   net.Conn
 	incoming *bufio.Reader
 	id       int
 	device   *device
 }
 
 // create a new connection
-func newAgentConnection(conn *net.UnixConn) *agentConn {
+func newAgentConnection(conn net.Conn) *agentConn {
 	currentAgentId++
 	newconn := &agentConn{
 		socket:   conn,

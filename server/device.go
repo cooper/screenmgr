@@ -3,9 +3,9 @@ package server
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net"
 	"os"
-	"log"
 )
 
 type deviceInfo struct {
