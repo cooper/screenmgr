@@ -17,8 +17,9 @@ type deviceInfo struct {
 }
 
 type device struct {
-	deviceID string
-	info     deviceInfo
+	deviceID       string
+	info           deviceInfo
+	lastScreenshot string
 }
 
 // create a new device and a directory for it
