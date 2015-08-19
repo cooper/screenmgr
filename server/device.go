@@ -14,14 +14,14 @@ type deviceInfo struct {
 	AddrString  string
 	VNCEnabled  bool
 	VNCPassword string
-	Hardware	map[string]string
+	Hardware    map[string]string
 }
 
 type Device struct {
 	DeviceID       string
 	Info           deviceInfo
 	LastScreenshot string
-	Online		   bool
+	Online         bool
 }
 
 // create a new device and a directory for it

@@ -1,8 +1,8 @@
 package server
 
 import (
-	"net/http"
 	"html/template"
+	"net/http"
 )
 
 var templates *template.Template

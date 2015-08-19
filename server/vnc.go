@@ -45,7 +45,7 @@ func (vnc vncManager) deviceLoop(dev *Device) {
 	C.vncEncryptAndStorePasswd(C.CString(dev.Info.VNCPassword), C.CString(dir))
 
 	tryLater := func(errStr string) {
-        dev.Online = false
+		dev.Online = false
 		dev.warn(errStr + "; waiting 10 seconds")
 		time.Sleep(10)
 	}
@@ -86,7 +86,7 @@ func (vnc vncManager) deviceLoop(dev *Device) {
 			continue
 		}
 
-        cmd.Wait()
+		cmd.Wait()
 	}
 
 }
@@ -96,7 +96,7 @@ func (vnc vncManager) handleVNCSnapshotOutput(dev *Device, line string) {
 	if len(found) == 0 {
 		return
 	}
-    dev.Online = true
+	dev.Online = true
 	dev.LastScreenshot = found
 }
 
