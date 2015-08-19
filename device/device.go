@@ -1,4 +1,4 @@
-package server
+package device
 
 import (
 	"encoding/json"
@@ -25,7 +25,7 @@ type Device struct {
 }
 
 // create a new device and a directory for it
-func newDevice(deviceID string, info deviceInfo) (dev *Device, err error) {
+func NewDevice(deviceID string, info deviceInfo) (dev *Device, err error) {
 
 	// create device directory
 	if err = os.Mkdir(deviceDirectoryForID(deviceID), 0744); err != nil {
@@ -37,12 +37,12 @@ func newDevice(deviceID string, info deviceInfo) (dev *Device, err error) {
 	dev.Info = info
 
 	// create screenshot directory
-	if err = os.Mkdir(dev.getFilePath("screenshots"), 0744); err != nil {
+	if err = os.Mkdir(dev.GetFilePath("screenshots"), 0744); err != nil {
 		return
 	}
 
 	// write the device data
-	if err = dev.writeInfo(); err != nil {
+	if err = dev.WriteInfo(); err != nil {
 		return
 	}
 
@@ -61,18 +61,18 @@ func deviceDirectoryForID(deviceID string) string {
 // DEVICE METHODS
 
 // get device directory
-func (dev *Device) getDirectory() string {
+func (dev *Device) GetDirectory() string {
 	return deviceDirectoryForID(dev.DeviceID)
 }
 
 // get device file path
-func (dev *Device) getFilePath(fileName string) string {
-	return dev.getDirectory() + "/" + fileName
+func (dev *Device) GetFilePath(fileName string) string {
+	return dev.GetDirectory() + "/" + fileName
 }
 
 // read info from file
-func (dev *Device) readInfo() error {
-	data, err := ioutil.ReadFile(dev.getFilePath("info.json"))
+func (dev *Device) ReadInfo() error {
+	data, err := ioutil.ReadFile(dev.GetFilePath("info.json"))
 	if err != nil {
 		return err
 	}
@@ -83,21 +83,21 @@ func (dev *Device) readInfo() error {
 }
 
 // write info to file
-func (dev *Device) writeInfo() error {
+func (dev *Device) WriteInfo() error {
 	json, err := json.Marshal(dev.Info)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(dev.getFilePath("info.json"), json, 0744)
+	return ioutil.WriteFile(dev.GetFilePath("info.json"), json, 0744)
 }
 
 // get IP
-func (dev *Device) getIP() net.IP {
+func (dev *Device) GetIP() net.IP {
 	return net.ParseIP(dev.Info.AddrString)
 }
 
 // log warning
-func (dev *Device) warn(warning string) {
+func (dev *Device) Warn(warning string) {
 	log.Printf("[%s] %s\n", dev.DeviceID, warning)
 }
 

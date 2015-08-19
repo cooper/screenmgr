@@ -3,6 +3,7 @@ package server
 import (
 	"bufio"
 	"encoding/json"
+	"github.com/cooper/screenmgr/device"
 	"net"
 )
 
@@ -12,7 +13,7 @@ type agentConn struct {
 	socket   net.Conn
 	incoming *bufio.Reader
 	id       int
-	device   *Device
+	device   *device.Device
 }
 
 // create a new connection

@@ -5,6 +5,7 @@ import "C"
 
 import (
 	"bufio"
+	"github.com/cooper/screenmgr/device"
 	"os/exec"
 	"regexp"
 	"time"
@@ -14,39 +15,39 @@ import (
 // not all devices in the master device list will
 // necessarily be managed by the VNC manager.
 type vncManager struct {
-	devices []*Device
+	devices []*device.Device
 }
 
 var vnc = new(vncManager)
 var screenshotRegexp, _ = regexp.Compile(`screenshot\d+\.jpg`)
 
 // start a loop for a device
-func (vnc vncManager) startDeviceLoop(dev *Device) {
+func (vnc vncManager) startDeviceLoop(dev *device.Device) {
 	vnc.devices = append(vnc.devices, dev)
 	go vnc.deviceLoop(dev)
 }
 
-func (vnc vncManager) deviceLoop(dev *Device) {
+func (vnc vncManager) deviceLoop(dev *device.Device) {
 
 	// first check that it's enabled
 	if !dev.Info.VNCEnabled {
-		dev.warn("Attempted to start VNC loop, but VNC is disabled")
+		dev.Warn("Attempted to start VNC loop, but VNC is disabled")
 		return
 	}
 
 	// check that there's a password
 	if len(dev.Info.VNCPassword) == 0 {
-		dev.warn("Attempted to start VNC loop, but there's no password")
+		dev.Warn("Attempted to start VNC loop, but there's no password")
 		return
 	}
 
 	// create a passwd file
-	dir := dev.getFilePath("vncpasswd")
+	dir := dev.GetFilePath("vncpasswd")
 	C.vncEncryptAndStorePasswd(C.CString(dev.Info.VNCPassword), C.CString(dir))
 
 	tryLater := func(errStr string) {
 		dev.Online = false
-		dev.warn(errStr + "; waiting 10 seconds")
+		dev.Warn(errStr + "; waiting 10 seconds")
 		time.Sleep(10)
 	}
 
@@ -58,7 +59,7 @@ func (vnc vncManager) deviceLoop(dev *Device) {
 			"-fps", "5",
 			"-count", "50",
 			dev.Info.AddrString,
-			dev.getFilePath("screenshots/screenshot.jpg"),
+			dev.GetFilePath("screenshots/screenshot.jpg"),
 		)
 
 		// get STDERR and make a scanner
@@ -91,7 +92,7 @@ func (vnc vncManager) deviceLoop(dev *Device) {
 
 }
 
-func (vnc vncManager) handleVNCSnapshotOutput(dev *Device, line string) {
+func (vnc vncManager) handleVNCSnapshotOutput(dev *device.Device, line string) {
 	found := screenshotRegexp.FindString(line)
 	if len(found) == 0 {
 		return
@@ -102,8 +103,7 @@ func (vnc vncManager) handleVNCSnapshotOutput(dev *Device, line string) {
 
 // add the VNC loop method to device setup
 func init() {
-
-	addDeviceSetupCallback(func(dev *Device) error {
+	device.AddDeviceSetupCallback(func(dev *device.Device) error {
 		vnc.startDeviceLoop(dev)
 		return nil
 	})

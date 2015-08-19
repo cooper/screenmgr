@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/cooper/screenmgr/device"
 	"html/template"
 	"net/http"
 )
@@ -31,11 +32,11 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	// find online devices
-	devs := make([]*Device, 0, len(devices))
-	for _, dev := range devices {
-		if dev.Online {
-			devs = append(devs, dev)
-		}
+	devs := make([]*device.Device, 0, len(device.Devices))
+	for _, dev := range device.Devices {
+		//if dev.Online {
+		devs = append(devs, dev)
+		//}
 	}
 
 	// serve template
