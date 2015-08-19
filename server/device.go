@@ -14,6 +14,7 @@ type deviceInfo struct {
 	AddrString  string
 	VNCEnabled  bool
 	VNCPassword string
+	Hardware	map[string]string
 }
 
 type Device struct {
