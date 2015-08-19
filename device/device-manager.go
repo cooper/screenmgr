@@ -5,16 +5,15 @@ import (
 	"log"
 )
 
-var devices = make(map[string]*Device)
-
-// setup callbacks
 type DeviceSetupCallback func(dev *Device) error
 
-var deviceSetupCallbacks []DeviceSetupCallback
+var (
+	devices              = make(map[string]*Device)
+	deviceSetupCallbacks []DeviceSetupCallback
+)
 
 func AddDeviceSetupCallback(cb DeviceSetupCallback) {
 	deviceSetupCallbacks = append(deviceSetupCallbacks, cb)
-
 }
 
 func FindDevices() error {

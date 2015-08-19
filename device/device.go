@@ -101,13 +101,42 @@ func (dev *Device) Warn(warning string) {
 	log.Printf("[%s] %s\n", dev.DeviceID, warning)
 }
 
-// setup device for loops and scrunch
-func (dev *Device) setup() error {
-	for _, cb := range deviceSetupCallbacks {
-		err := cb(dev)
-		if err != nil {
-			return nil
+// find the last screenshot
+func (dev *Device) GetLastScreenshot() string {
+
+	// this is easy
+	if dev.LastScreenshot != "" {
+		return dev.LastScreenshot
+	}
+
+	// find screenshots
+	files, err := ioutil.ReadDir(dev.GetFilePath("screenshots"))
+	if err != nil {
+		return ""
+	}
+
+	// find most recent
+	var current os.FileInfo
+	var currentName string
+	for _, file := range files {
+		if current == nil || file.ModTime().After(current.ModTime()) {
+			current = file
+			currentName = current.Name()
 		}
 	}
-	return nil
+
+	// cache this
+	dev.LastScreenshot = currentName
+
+	return currentName
+}
+
+// setup device for loops and such
+func (dev *Device) setup() (err error) {
+	for _, cb := range deviceSetupCallbacks {
+		if err = cb(dev); err != nil {
+			return
+		}
+	}
+	return
 }
