@@ -1,4 +1,4 @@
-package server
+package agent
 
 import (
 	"bufio"
@@ -65,8 +65,8 @@ func handleAgentEvent(conn *agentConn, data []byte) bool {
 	}
 
 	// if a handler for this command exists, run it
-	if agentEventHandlers[command] != nil {
-		agentEventHandlers[command](conn, command, params)
+	if eventHandlers[command] != nil {
+		eventHandlers[command](conn, command, params)
 	}
 
 	return true

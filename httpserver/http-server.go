@@ -11,7 +11,7 @@ var templates *template.Template
 func Run() error {
 
 	// initialize templates
-	templates = template.Must(template.ParseGlob("server/templates/*"))
+	templates = template.Must(template.ParseGlob("httpserver/templates/*"))
 
 	// serve static files in devices directory
 	// FIXME: this allows access to vnc passwd files

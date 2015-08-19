@@ -1,4 +1,4 @@
-package server
+package vnc
 
 // #include "vncauth.h"
 import "C"
