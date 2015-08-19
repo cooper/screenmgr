@@ -1,4 +1,4 @@
-package server
+package httpserver
 
 import (
 	"fmt"
@@ -18,9 +18,7 @@ func (page *DevicePage) NumberOfDevices() int {
 func (page *DevicePage) RAMGBytes() string {
 	var megabytes uint64 = 0
 	for _, dev := range page.Devices {
-		fmt.Printf("checking if %s has it\n", dev.DeviceID)
 		if ram, ok := dev.Info.Hardware["RAM"]; ok {
-			fmt.Printf("...yes\n")
 			megabytes += sizeStringToMegabytes(ram)
 		}
 	}
@@ -33,7 +31,6 @@ func (page *DevicePage) CPUGHz() string {
 
 func sizeStringToMegabytes(size string) uint64 {
 	size = strings.Replace(strings.TrimSuffix(size, "B"), " ", "", -1)
-	fmt.Printf("so like: %s\n", size)
 	mb, err := bytefmt.ToMegabytes(size)
 	if err != nil {
 		return 0

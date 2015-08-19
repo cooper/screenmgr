@@ -2,13 +2,14 @@ package server
 
 import (
 	"github.com/cooper/screenmgr/device"
+	"github.com/cooper/screenmgr/httpserver"
 	"log"
 )
 
 func Run() {
 	checkError("Find devices", device.FindDevices())
 	checkError("Setup devices", device.SetupDevices())
-	checkError("Run HTTP server", runHTTPServer())
+	checkError("Run HTTP server", httpserver.Run())
 }
 
 func reportError(action string, err error) {

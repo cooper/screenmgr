@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-var Devices = make(map[string]*Device)
+var devices = make(map[string]*Device)
 
 // setup callbacks
 type DeviceSetupCallback func(dev *Device) error
@@ -44,7 +44,7 @@ func FindDevices() error {
 }
 
 func SetupDevices() error {
-	for _, dev := range Devices {
+	for _, dev := range devices {
 		err := dev.setup()
 		if err != nil {
 			return err
@@ -53,8 +53,12 @@ func SetupDevices() error {
 	return nil
 }
 
+func AllDevices() map[string]*Device {
+	return devices
+}
+
 // update the device in devices list with this device object,
 // maybe preserving whatever we have already?
 func updateDevice(dev *Device) {
-	Devices[dev.DeviceID] = dev
+	devices[dev.DeviceID] = dev
 }
