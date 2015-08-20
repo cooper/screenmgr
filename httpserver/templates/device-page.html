@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Screenmgr</title>
+<link rel="stylesheet" href="resources/style.css" type="text/css" />
+<script type="text/javascript" src="resources/mootools.js"></script>
+</head>
+<body>
+<div id="container">
+
+<div class="box-container">
+    <div class="box">{{.NumberOfDevices}}<div>Devices</div></div>
+    <div class="box">{{.CPUGHz}} GHz<div>CPU</div></div>
+    <div class="box">{{.RAMGBytes}} GB<div>RAM</div></div>
+    <div style="clear: both;"></div>
+    <div class="box-bar"></div>
+</div>
+
+{{range .Devices}}
+    {{template "device-window.html" .}}
+{{end}}
+
+</div>
+</body>
+</html>
