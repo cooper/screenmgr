@@ -16,13 +16,15 @@ func (page *DevicePage) NumberOfDevices() int {
 func (page *DevicePage) RAMGBytes() string {
 	var mb measure.Megabytes
 	for _, dev := range page.Devices {
-		if ram, ok := dev.Info.Hardware["RAM"]; ok {
-			mb += measure.MegabytesFromString(ram)
-		}
+		mb += dev.RAMMBytes()
 	}
 	return mb.ToGigabytes().String()
 }
 
 func (page *DevicePage) CPUGHz() string {
-	return measure.GigahertzFromString("0 GHz").String()
+	var mhz measure.Megahertz
+	for _, dev := range page.Devices {
+		mhz += dev.CombinedCPUMHz()
+	}
+	return mhz.ToGigahertz().String()
 }

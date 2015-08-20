@@ -1,10 +1,12 @@
 <div class="mac-container">
     <div class="header">
         <table>
-            <tr>
-                <td class="key">Model Name</td>
-                <td class="value">Something</td>
-            </tr>
+            {{range $key, $val := .Info.Hardware}}
+                <tr>
+                    <td class="key">{{$key}}</td>
+                    <td class="value">{{$val}}</td>
+                </tr>
+            {{end}}
         </table>
         <div class="icon">
             <img style="height: 100%;" src="resources/icons/generic-apple.png" alt="icon" />
