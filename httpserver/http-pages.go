@@ -1,7 +1,6 @@
 package httpserver
 
 import (
-	"fmt"
 	"github.com/cooper/screenmgr/device"
 	"github.com/cooper/screenmgr/megabytes"
 )
@@ -15,13 +14,13 @@ func (page *DevicePage) NumberOfDevices() int {
 }
 
 func (page *DevicePage) RAMGBytes() string {
-	var mb float64 = 0
+	var mb megabytes.Megabytes
 	for _, dev := range page.Devices {
 		if ram, ok := dev.Info.Hardware["RAM"]; ok {
 			mb += megabytes.MegabytesFromString(ram)
 		}
 	}
-	return fmt.Sprintf("%.2f", megabytes.MegabytesToGigabytes(mb))
+	return mb.ToGigabytes().String()
 }
 
 func (page *DevicePage) CPUGHz() string {
