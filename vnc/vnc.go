@@ -42,8 +42,8 @@ func (vnc vncManager) deviceLoop(dev *device.Device) {
 	}
 
 	// create a passwd file
-	dir := dev.GetFilePath("vncpasswd")
-	C.vncEncryptAndStorePasswd(C.CString(dev.Info.VNCPassword), C.CString(dir))
+	passwd := dev.GetFilePath("vncpasswd")
+	C.vncEncryptAndStorePasswd(C.CString(dev.Info.VNCPassword), C.CString(passwd))
 
 	tryLater := func(errStr string) {
 		dev.Online = false
@@ -53,9 +53,10 @@ func (vnc vncManager) deviceLoop(dev *device.Device) {
 
 	// this method will loop so long as the device is
 	// configured to run VNC.
+VNCLoop:
 	for dev.Info.VNCEnabled {
 		cmd := exec.Command("vncsnapshot",
-			"-passwd", dir,
+			"-passwd", passwd,
 			"-fps", "5",
 			"-count", "50",
 			dev.Info.AddrString,
@@ -66,14 +67,14 @@ func (vnc vncManager) deviceLoop(dev *device.Device) {
 		stderr, err := cmd.StderrPipe()
 		if err != nil {
 			tryLater("failed to get vncsnapshot STDERR pipe")
-			continue
+			continue VNCLoop
 		}
 		scanner := bufio.NewScanner(stderr)
 
 		// start the command
-		if err = cmd.Start(); err != nil {
+		if err := cmd.Start(); err != nil {
 			tryLater("vncsnapshot failed to start")
-			continue
+			continue VNCLoop
 		}
 
 		// read from the scanner
@@ -84,10 +85,15 @@ func (vnc vncManager) deviceLoop(dev *device.Device) {
 		// scanner error
 		if err := scanner.Err(); err != nil {
 			tryLater("Scanner terminated with error: " + err.Error())
-			continue
+			continue VNCLoop
 		}
 
-		cmd.Wait()
+		// vncsnapshot exited with non-zero status
+		if err := cmd.Wait(); err != nil {
+			tryLater("vncsnapshot exited: " + err.Error())
+			continue VNCLoop
+		}
+
 	}
 
 }
