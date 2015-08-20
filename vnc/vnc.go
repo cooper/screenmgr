@@ -11,23 +11,16 @@ import (
 	"time"
 )
 
-// the VNC manager houses the devices in the VNC loop.
-// not all devices in the master device list will
-// necessarily be managed by the VNC manager.
-type vncManager struct {
-	devices []*device.Device
-}
-
-var vnc = new(vncManager)
+var devices []*device.Device
 var screenshotRegexp, _ = regexp.Compile(`screenshot\d+\.jpg`)
 
 // start a loop for a device
-func (vnc vncManager) startDeviceLoop(dev *device.Device) {
-	vnc.devices = append(vnc.devices, dev)
-	go vnc.deviceLoop(dev)
+func startDeviceLoop(dev *device.Device) {
+	devices = append(devices, dev)
+	go deviceLoop(dev)
 }
 
-func (vnc vncManager) deviceLoop(dev *device.Device) {
+func deviceLoop(dev *device.Device) {
 
 	// first check that it's enabled
 	if !dev.Info.VNCEnabled {
@@ -46,7 +39,6 @@ func (vnc vncManager) deviceLoop(dev *device.Device) {
 	C.vncEncryptAndStorePasswd(C.CString(dev.Info.VNCPassword), C.CString(passwd))
 
 	tryLater := func(errStr string) {
-		dev.Online = false
 		dev.Warn(errStr + "; waiting 10 seconds")
 		time.Sleep(10 * time.Second)
 	}
@@ -79,7 +71,7 @@ VNCLoop:
 
 		// read from the scanner
 		for scanner.Scan() {
-			vnc.handleVNCSnapshotOutput(dev, scanner.Text())
+			handleVNCSnapshotOutput(dev, scanner.Text())
 		}
 
 		// scanner error
@@ -98,19 +90,18 @@ VNCLoop:
 
 }
 
-func (vnc vncManager) handleVNCSnapshotOutput(dev *device.Device, line string) {
+func handleVNCSnapshotOutput(dev *device.Device, line string) {
 	found := screenshotRegexp.FindString(line)
 	if len(found) == 0 {
 		return
 	}
-	dev.Online = true
 	dev.LastScreenshot = found
 }
 
 // add the VNC loop method to device setup
 func init() {
 	device.AddDeviceSetupCallback(func(dev *device.Device) error {
-		vnc.startDeviceLoop(dev)
+		startDeviceLoop(dev)
 		return nil
 	})
 }
