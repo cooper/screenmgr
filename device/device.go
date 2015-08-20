@@ -116,12 +116,12 @@ func (dev *Device) GetLastScreenshot() string {
 	}
 
 	// find most recent
-	var current os.FileInfo
+	var currentFile os.FileInfo
 	var currentName string
 	for _, file := range files {
-		if current == nil || file.ModTime().After(current.ModTime()) {
-			current = file
-			currentName = current.Name()
+		if currentFile == nil || file.ModTime().After(currentFile.ModTime()) {
+			currentFile = file
+			currentName = currentFile.Name()
 		}
 	}
 
