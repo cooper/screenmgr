@@ -48,7 +48,7 @@ func (vnc vncManager) deviceLoop(dev *device.Device) {
 	tryLater := func(errStr string) {
 		dev.Online = false
 		dev.Warn(errStr + "; waiting 10 seconds")
-		time.Sleep(10)
+		time.Sleep(10 * time.Second)
 	}
 
 	// this method will loop so long as the device is
