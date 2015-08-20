@@ -1,23 +1,31 @@
 <div class="mac-container">
     <div class="header">
         <table>
-            {{range $key, $val := .Info.Hardware}}
+            {{range .PrettyHardwareInOrder}}
                 <tr>
-                    <td class="key">{{$key}}</td>
-                    <td class="value">{{$val}}</td>
+                    <td class="key">{{.Key}}</td>
+                    <td class="value">{{.Value}}</td>
                 </tr>
             {{end}}
         </table>
         <div class="icon">
             <img style="height: 100%;" src="resources/icons/generic-apple.png" alt="icon" />
-            <span>OS Version</span>
+            <!--<span>OS Version</span>-->
         </div>
         <h1>
             {{.Info.ProductLine}}<br />
             <a style="font-weight: normal;" href="#">{{.Info.Nickname}}</a>
         </h1>
     </div>
-    <div class="screenshot-container">
-        <img src="devices/{{.DeviceID}}/screenshots/{{.GetLastScreenshot}}" alt="{{.DeviceID}}" class="screenshot" />
-    </div>
+    {{if .Online}}
+        <div class="screenshot-container">
+            <img src="devices/{{.DeviceID}}/screenshots/{{.GetLastScreenshot}}" alt="{{.DeviceID}}" class="screenshot" />
+        </div>
+    {{else}}
+        <div class="screenshot-container offline">
+            <img src="devices/{{.DeviceID}}/screenshots/{{.GetLastScreenshot}}"  alt="{{.DeviceID}}" class="screenshot offline" />
+            <div class="screenshot-overlay"></div>
+            <div class="last-seen">Last seen A LONG<br />LONG TIME AGO</div>
+        </div>
+    {{end}}
 </div>

@@ -9,9 +9,9 @@ var hardwareOrder = [...]string{
 	"ModelName",
 	"ModelIdentifier",
 	"CPUName",
+	"CPUFrequency",
 	"CPUCount",
 	"CPUCoreCount",
-	"CPUFrequency",
 	"L1Cache",
 	"L2Cache",
 	"L3Cache",
@@ -70,4 +70,42 @@ func (dev *Device) RAMMBytes() measure.Megabytes {
 		return measure.MegabytesFromString(ram)
 	}
 	return 0
+}
+
+type hardwarePair struct{ Key, Value string }
+
+func (dev *Device) HardwareInOrder() (hardware []hardwarePair) {
+	did := make(map[string]bool)
+	doPair := func(key, val string) {
+		if did[key] {
+			return
+		}
+		hardware = append(hardware, hardwarePair{key, val})
+		did[key] = true
+	}
+
+	// first, do the ordered ones
+	for _, key := range hardwareOrder {
+		if val, ok := dev.Info.Hardware[key]; ok {
+			doPair(key, val)
+		}
+	}
+
+	// then, do any extras
+	// TODO: maybe alphabetize the leftovers?
+	for key, val := range dev.Info.Hardware {
+		doPair(key, val)
+	}
+
+	return
+}
+
+func (dev *Device) PrettyHardwareInOrder() (hardware []hardwarePair) {
+	hardware = dev.HardwareInOrder()
+	for i, pair := range hardware {
+		if pretty, ok := prettyHardware[pair.Key]; ok {
+			hardware[i].Key = pretty
+		}
+	}
+	return
 }
