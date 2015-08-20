@@ -1,4 +1,4 @@
-package megabytes
+package measure
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 
 type Megabytes float64
 
-// string such as "10 MB" or "1 GB" to numeric mb
+// string such as "10 MB" or "1 GB" to mb
 func MegabytesFromString(size string) Megabytes {
 	size = strings.Replace(strings.TrimSuffix(size, "B"), " ", "", -1)
 	mb, err := bytefmt.ToMegabytes(size)

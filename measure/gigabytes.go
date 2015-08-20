@@ -1,10 +1,10 @@
-package megabytes
+package measure
 
 import "fmt"
 
 type Gigabytes float64
 
-// string such as "10 MB" or "5 GB" to numeric gigs
+// string such as "10 MB" or "5 GB" to gigs
 func GigabytesFromString(size string) Gigabytes {
 	return MegabytesFromString(size).ToGigabytes()
 }
