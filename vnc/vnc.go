@@ -47,6 +47,13 @@ func deviceLoop(dev *device.Device) {
 	// configured to run VNC.
 VNCLoop:
 	for dev.Info.VNCEnabled {
+
+		// not online
+		if !dev.Online {
+			time.Sleep(10 * time.Second)
+			continue VNCLoop
+		}
+
 		cmd := exec.Command("vncsnapshot",
 			"-passwd", passwd,
 			"-fps", "5",

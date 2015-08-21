@@ -6,17 +6,17 @@ import (
 )
 
 var hardwareOrder = [...]string{
-	"ModelName",
-	"ModelIdentifier",
-	"CPUName",
-	"CPUFrequency",
-	"CPUCount",
-	"CPUCoreCount",
-	"L1Cache",
-	"L2Cache",
-	"L3Cache",
-	"RAM",
-	"BusFrequency",
+	"ModelName",       // e.g. Power Mac G3
+	"ModelIdentifier", // e.g. PowerMac1,1
+	"CPUName",         // e.g. Intel Core i7 870
+	"CPUFrequency",    // clock speed; e.g. 1.0 GHz
+	"CPUCount",        // number of distinct processors
+	"CPUCoreCount",    // number of cores PER PROCESSOR
+	"L1Cache",         // e.g. 512 KB
+	"L2Cache",         // e.g. 1 MB
+	"L3Cache",         // e.g. 4 MB
+	"RAM",             // system memory; e.g. 4 GB
+	"BusFrequency",    // system bus speed; e.g. 100 MHz
 }
 
 var prettyHardware = map[string]string{
@@ -25,7 +25,7 @@ var prettyHardware = map[string]string{
 	"CPUName":         "Processor Name",
 	"CPUFrequency":    "Processor Speed",
 	"CPUCount":        "Number of CPUs",
-	"CPUCoreCount":    "Number of Cores",
+	"CPUCoreCount":    "Cores (per CPU)",
 	"L1Cache":         "L1 Cache (per CPU)",
 	"L2Cache":         "L2 Cache (per CPU)",
 	"L3Cache":         "L3 Cache (per CPU)",
