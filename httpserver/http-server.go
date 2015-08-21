@@ -1,6 +1,7 @@
 package httpserver
 
 import (
+	"encoding/json"
 	"github.com/cooper/screenmgr/device"
 	"html/template"
 	"net/http"
@@ -25,6 +26,9 @@ func Run() error {
 	// main handler
 	http.HandleFunc("/", httpHandler)
 
+	// screenshot updater
+	http.HandleFunc("/update", updateHandler)
+
 	return http.ListenAndServe(":8080", nil)
 }
 
@@ -41,5 +45,33 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 	// serve template
 	page := &DevicePage{devs}
 	templates.ExecuteTemplate(w, "device-page.html", page)
+
+}
+
+func updateHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	r.ParseForm()
+	var devices interface{}
+	json.Unmarshal([]byte(r.Form.Get("devices")), &devices)
+	deviceNames, ok := devices.([]interface{})
+	if !ok {
+		return
+	}
+
+	// for each device, find the most recent screenshot
+	screenshots := make(map[string]string, len(deviceNames))
+	for _, name := range deviceNames {
+		deviceID, ok := name.(string)
+		dev := device.GetDeviceByID(deviceID)
+		if !ok || dev == nil {
+			continue
+		}
+		screenshots[deviceID] = dev.GetLastScreenshot()
+	}
+
+	// write json
+	if json, err := json.Marshal(screenshots); err == nil {
+		w.Write(json)
+	}
 
 }

@@ -1,5 +1,8 @@
+{{$offline := not .Online}}
+{{$lastScreenshot := .GetLastScreenshot}}
+
 <div class="mac-container">
-    <div class="header">
+    <div class="header{{if $offline}} offline{{end}}">
         <table>
             {{range .PrettyHardwareInOrder}}
                 <tr>
@@ -17,15 +20,13 @@
             <a style="font-weight: normal;" href="#">{{.Info.Nickname}}</a>
         </h1>
     </div>
-    {{if .Online}}
+    {{if $lastScreenshot}}
         <div class="screenshot-container">
-            <img src="devices/{{.DeviceID}}/screenshots/{{.GetLastScreenshot}}" alt="{{.DeviceID}}" class="screenshot" />
-        </div>
-    {{else}}
-        <div class="screenshot-container offline">
-            <img src="devices/{{.DeviceID}}/screenshots/{{.GetLastScreenshot}}"  alt="{{.DeviceID}}" class="screenshot offline" />
-            <div class="screenshot-overlay"></div>
-            <div class="last-seen">Last seen A LONG<br />LONG TIME AGO</div>
+            <img src="devices/{{.DeviceID}}/screenshots/{{$lastScreenshot}}" alt="{{.DeviceID}}" class="screenshot{{if $offline}} offline{{end}}" />
+            {{if $offline}}
+                <div class="screenshot-overlay"></div>
+                <div class="last-seen">Last seen A VERY<br />LONG TIME AGO</div>
+            {{end}}
         </div>
     {{end}}
 </div>

@@ -56,6 +56,11 @@ func AllDevices() map[string]*Device {
 	return devices
 }
 
+// find an existing device by its ID
+func GetDeviceByID(deviceID string) *Device {
+	return devices[deviceID]
+}
+
 // update the device in devices list with this device object,
 // maybe preserving whatever we have already?
 func updateDevice(dev *Device) {
