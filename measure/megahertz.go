@@ -12,14 +12,14 @@ func MegahertzFromString(freq string) Megahertz {
 	freq = strings.Replace(strings.TrimSuffix(freq, "Hz"), " ", "", -1)
 
 	// parse the numeric part
-	value, err := strconv.ParseUint(freq[:len(freq)-1], 10, 0)
+	value, err := strconv.ParseFloat(freq[:len(freq)-1], 64)
 	if err != nil {
 		return 0
 	}
 
 	// multipliers
-	var multiplier uint64 = 1
-	switch freq[1:] {
+	var multiplier float64 = 1
+	switch freq[len(freq)-1:] {
 	case "K":
 		multiplier *= 1 / 1000
 	case "G":

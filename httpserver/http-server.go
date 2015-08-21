@@ -5,6 +5,7 @@ import (
 	"github.com/cooper/screenmgr/device"
 	"html/template"
 	"net/http"
+	"sort"
 )
 
 var templates *template.Template
@@ -37,12 +38,13 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 
 	// use all devices
 	devices := device.AllDevices()
-	devs := make([]*device.Device, 0, len(devices))
+	devs := make(device.DeviceCollection, 0, len(devices))
 	for _, dev := range devices {
 		devs = append(devs, dev)
 	}
 
 	// serve template
+	sort.Stable(devs)
 	page := &DevicePage{devs}
 	templates.ExecuteTemplate(w, "device-page.html", page)
 
