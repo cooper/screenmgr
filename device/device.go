@@ -97,8 +97,13 @@ func (dev *Device) GetIP() net.IP {
 }
 
 // log warning
-func (dev *Device) Warn(warning string) {
-	log.Printf("[%s] %s\n", dev.DeviceID, warning)
+func (dev *Device) Warn(f string, warning ...interface{}) {
+	log.Printf("[" + dev.DeviceID + "] " + f + "\n", warning...)
+}
+
+// log debug
+func (dev *Device) Debug(f string, message ...interface{}) {
+	log.Printf("[" + dev.DeviceID + "] " + f + "\n", message...)
 }
 
 // find the last screenshot

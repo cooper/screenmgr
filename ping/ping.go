@@ -31,6 +31,8 @@ func deviceLoop(dev *device.Device) {
 	// on receive, update last receive time
 	lastTime := time.Now()
 	p.OnRecv = func(addr *net.IPAddr, rtt time.Duration) {
+		dev.Debug("received ICMP packet: addr=%v, rtt=%v", addr, rtt)
+
 		if !dev.Online {
 			dev.Warn("now online")
 			dev.Online = true
@@ -40,6 +42,7 @@ func deviceLoop(dev *device.Device) {
 
 	// on idle, check if it's been a while
 	p.OnIdle = func() {
+		dev.Debug("ICMP idle")
 
 		// it's been less than 10 seconds; no big deal
 		if time.Since(lastTime) < 10*time.Second {

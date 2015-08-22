@@ -24,15 +24,21 @@
 // the authors on vnc@uk.research.att.com for information on obtaining it.
 
 
-/*
- * vncauth.h - describes the functions provided by the vncauth library.
- */
+#define VC_EXTRALEAN
 
-#define MAXPWLEN 8
-#define CHALLENGESIZE 16
+#ifdef WIN32
+#include <winsock2.h>
+#include <process.h>
+#include <crtdbg.h>
+#include <tchar.h>
+#include <windows.h>
+#include <io.h>
+#endif
 
-extern int vncEncryptAndStorePasswd(char *passwd, char *fname);
-extern char *vncDecryptPasswdFromFile(char *fname);
-extern void vncEncryptBytes(unsigned char *bytes, char *passwd);
-extern void vncEncryptPasswd(unsigned char *encryptedPasswd, char *passwd);
-extern char *vncDecryptPasswd(const unsigned char *encryptedPasswd);
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <locale.h>
+#include <time.h>
+
+//#include "rfb.h"

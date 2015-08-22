@@ -98,11 +98,13 @@ VNCLoop:
 }
 
 func handleVNCSnapshotOutput(dev *device.Device, line string) {
+	dev.Debug("vncsnapshot: %s", line)
 	found := screenshotRegexp.FindString(line)
 	if len(found) == 0 {
 		return
 	}
 	dev.LastScreenshot = found
+	dev.Debug("updated screenshot: %s", found)
 }
 
 // add the VNC loop method to device setup
