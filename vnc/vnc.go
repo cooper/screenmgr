@@ -45,6 +45,8 @@ func deviceLoop(dev *device.Device) {
 
 	// this method will loop so long as the device is
 	// configured to run VNC.
+	dev.Debug("starting VNC loop")
+
 VNCLoop:
 	for dev.Info.VNCEnabled {
 

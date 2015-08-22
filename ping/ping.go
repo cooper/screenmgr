@@ -21,6 +21,7 @@ func deviceLoop(dev *device.Device) {
 	p.Network("udp")
 
 	// resolve IP
+	// TODO: ipv6 support
 	ra, err := net.ResolveIPAddr("ip4:icmp", dev.Info.AddrString)
 	if err != nil {
 		dev.Warn("ping couldn't resolve the IP address")
@@ -57,6 +58,7 @@ func deviceLoop(dev *device.Device) {
 
 	// do this continuously
 	// TODO: if the device is removed or ping is disabled, stop the loop.
+	dev.Debug("starting ICMP loop")
 	p.RunLoop()
 
 }
