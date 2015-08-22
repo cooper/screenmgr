@@ -23,20 +23,20 @@ func startDeviceLoop(dev *device.Device) {
 func deviceLoop(dev *device.Device) {
 
 	// first check that it's enabled
-	if !dev.Info.VNCEnabled {
+	if !dev.Info.VNC.Enabled {
 		dev.Warn("Attempted to start VNC loop, but VNC is disabled")
 		return
 	}
 
 	// check that there's a password
-	if len(dev.Info.VNCPassword) == 0 {
+	if len(dev.Info.VNC.Password) == 0 {
 		dev.Warn("Attempted to start VNC loop, but there's no password")
 		return
 	}
 
 	// create a passwd file
 	passwd := dev.GetFilePath("vncpasswd")
-	C.vncEncryptAndStorePasswd(C.CString(dev.Info.VNCPassword), C.CString(passwd))
+	C.vncEncryptAndStorePasswd(C.CString(dev.Info.VNC.Password), C.CString(passwd))
 
 	tryLater := func(errStr string) {
 		dev.Warn(errStr + "; waiting 10 seconds")
@@ -48,7 +48,7 @@ func deviceLoop(dev *device.Device) {
 	dev.Debug("starting VNC loop")
 
 VNCLoop:
-	for dev.Info.VNCEnabled {
+	for dev.Info.VNC.Enabled {
 
 		// not online
 		if !dev.Online {

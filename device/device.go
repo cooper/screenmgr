@@ -12,9 +12,19 @@ type deviceInfo struct {
 	ProductLine string
 	Nickname    string
 	AddrString  string
-	VNCEnabled  bool
-	VNCPassword string
 	Hardware    map[string]string
+
+	VNC struct {
+		Enabled  bool
+		Password string
+	}
+
+	SSH struct {
+		Enabled  bool
+		Username string
+		Password string
+		UsesKey  bool
+	}
 }
 
 type Device struct {
@@ -98,12 +108,12 @@ func (dev *Device) GetIP() net.IP {
 
 // log warning
 func (dev *Device) Warn(f string, warning ...interface{}) {
-	log.Printf("[" + dev.DeviceID + "] " + f + "\n", warning...)
+	log.Printf("["+dev.DeviceID+"] "+f+"\n", warning...)
 }
 
 // log debug
 func (dev *Device) Debug(f string, message ...interface{}) {
-	log.Printf("[" + dev.DeviceID + "] " + f + "\n", message...)
+	log.Printf("["+dev.DeviceID+"] "+f+"\n", message...)
 }
 
 // find the last screenshot

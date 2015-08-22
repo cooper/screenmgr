@@ -5,6 +5,7 @@ import (
 	"github.com/cooper/screenmgr/device"
 	"github.com/cooper/screenmgr/httpserver"
 	_ "github.com/cooper/screenmgr/ping"
+	_ "github.com/cooper/screenmgr/ssh"
 	_ "github.com/cooper/screenmgr/vnc"
 	"log"
 )
