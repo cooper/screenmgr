@@ -13,6 +13,7 @@ type deviceInfo struct {
 	Nickname    string
 	AddrString  string
 	Hardware    map[string]string
+	Software    map[string]string
 
 	VNC struct {
 		Enabled  bool
@@ -104,6 +105,11 @@ func (dev *Device) WriteInfo() error {
 // get IP
 func (dev *Device) GetIP() net.IP {
 	return net.ParseIP(dev.Info.AddrString)
+}
+
+// log
+func (dev *Device) Log(f string, message ...interface{}) {
+	log.Printf("["+dev.DeviceID+"] "+f+"\n", message...)
 }
 
 // log warning

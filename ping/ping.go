@@ -35,7 +35,7 @@ func deviceLoop(dev *device.Device) {
 		dev.Debug("received ICMP packet: addr=%v, rtt=%v", addr, rtt)
 
 		if !dev.Online {
-			dev.Warn("now online")
+			dev.Log("now online")
 			dev.Online = true
 		}
 		lastTime = time.Now()
@@ -51,7 +51,7 @@ func deviceLoop(dev *device.Device) {
 		}
 
 		if dev.Online {
-			dev.Warn("now offline")
+			dev.Log("now offline")
 			dev.Online = false
 		}
 	}

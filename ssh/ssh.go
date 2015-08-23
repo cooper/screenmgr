@@ -5,8 +5,18 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+// convenient for methods involving device + ssh client
+type sshClient struct {
+	dev    *device.Device
+	client *ssh.Client
+}
+
+// the list of devices with an SSH loop
 var devices []*device.Device
-var initializers = make(map[string]func(dev *device.Device, sess *ssh.Session) error)
+
+// list of initializers for each OS family
+// these are responsible for executing platform-specific commands
+var initializers = make(map[string]func(sshClient) error)
 
 func startDeviceLoop(dev *device.Device) error {
 	devices = append(devices, dev)
@@ -33,17 +43,18 @@ func deviceLoop(dev *device.Device) {
 		return
 	}
 
-	// create a session
-	sess, err := client.NewSession()
-	if err != nil {
-		dev.Warn("ssh session init failed: %v", err)
-		return
+	dev.Log("SSH connection established")
+
+	// call initializer for this OS family
+	family := dev.Info.Software["OSFamily"]
+	if handler, exists := initializers[family]; exists {
+		dev.Debug("initializing via ssh for OS family: %s", family)
+		handler(sshClient{dev, client})
 	}
 
-	dev.Debug("SSH session established: %v", sess)
-	initializers["osx"](dev, sess)
 }
 
+// returns preferred authentication methods
 func authMethods(dev *device.Device) (methods []ssh.AuthMethod) {
 
 	// TODO: keys
@@ -51,11 +62,52 @@ func authMethods(dev *device.Device) (methods []ssh.AuthMethod) {
 
 	}
 
+	// password authentication
 	if pw := dev.Info.SSH.Password; pw != "" {
 		methods = append(methods, ssh.Password(pw))
 	}
 
 	return methods
+}
+
+// returns combined stdout + stderr
+func (s sshClient) combinedOutputBytes(command string) []byte {
+	sess, err := s.client.NewSession()
+	if err != nil {
+		s.dev.Warn("could not create an SSH session")
+		return nil
+	}
+	data, err := sess.CombinedOutput(command)
+	if err != nil {
+		s.dev.Warn("command `%s` failed: %s", command, err)
+		return nil
+	}
+	return data
+}
+
+// returns combined stdout + stderr
+func (s sshClient) combinedOutput(command string) string {
+	return string(s.combinedOutputBytes(command))
+}
+
+// returns stdout
+func (s sshClient) outputBytes(command string) []byte {
+	sess, err := s.client.NewSession()
+	if err != nil {
+		s.dev.Warn("could not create an SSH session")
+		return nil
+	}
+	data, err := sess.Output(command)
+	if err != nil {
+		s.dev.Warn("command `%s` failed: %s", command, err)
+		return nil
+	}
+	return data
+}
+
+// returns stdout
+func (s sshClient) output(command string) string {
+	return string(s.outputBytes(command))
 }
 
 func init() {

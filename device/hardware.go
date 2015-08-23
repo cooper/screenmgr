@@ -19,7 +19,7 @@ var hardwareOrder = [...]string{
 	"BusFrequency",    // system bus speed; e.g. 100 MHz
 }
 
-var prettyHardware = map[string]string{
+var prettyHardware = map[string]interface{}{
 	"ModelName":       "Model Name",
 	"ModelIdentifier": "Model Identifier",
 	"CPUName":         "Processor Name",
@@ -103,8 +103,23 @@ func (dev *Device) HardwareInOrder() (hardware []hardwarePair) {
 func (dev *Device) PrettyHardwareInOrder() (hardware []hardwarePair) {
 	hardware = dev.HardwareInOrder()
 	for i, pair := range hardware {
-		if pretty, ok := prettyHardware[pair.Key]; ok {
-			hardware[i].Key = pretty
+		switch val := prettyHardware[pair.Key].(type) {
+
+		case nil:
+			break
+
+		// a simple string is the pretty key name
+		case string:
+			hardware[i].Key = val
+
+		// a function returns a pretty key and value
+		case func(string, string) (string, string):
+			hardware[i].Key, hardware[i].Value = val(pair.Key, pair.Value)
+
+		// it can't be anything else
+		default:
+			panic("unknown type in prettyHardware map!")
+
 		}
 	}
 	return
