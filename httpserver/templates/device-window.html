@@ -11,6 +11,14 @@
                 </tr>
             {{end}}
         </table>
+        <table>
+            {{range .PrettySoftwareInOrder}}
+                <tr>
+                    <td class="key">{{.Key}}</td>
+                    <td class="value">{{.Value}}</td>
+                </tr>
+            {{end}}
+        </table>
         <div class="icon">
             <img style="height: 100%;" src="resources/icons/generic-apple.png" alt="icon" />
             <!--<span>OS Version</span>-->

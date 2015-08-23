@@ -3,6 +3,7 @@ package ssh
 import (
 	"github.com/cooper/screenmgr/device"
 	"golang.org/x/crypto/ssh"
+	"strings"
 )
 
 // convenient for methods involving device + ssh client
@@ -82,12 +83,13 @@ func (s sshClient) combinedOutputBytes(command string) []byte {
 		s.dev.Warn("command `%s` failed: %s", command, err)
 		return nil
 	}
+	s.dev.Debug("`%s` = %s", command, data)
 	return data
 }
 
 // returns combined stdout + stderr
 func (s sshClient) combinedOutput(command string) string {
-	return string(s.combinedOutputBytes(command))
+	return strings.TrimSpace(string(s.combinedOutputBytes(command)))
 }
 
 // returns stdout
@@ -102,12 +104,13 @@ func (s sshClient) outputBytes(command string) []byte {
 		s.dev.Warn("command `%s` failed: %s", command, err)
 		return nil
 	}
+	s.dev.Debug("`%s` = %s", command, data)
 	return data
 }
 
 // returns stdout
 func (s sshClient) output(command string) string {
-	return string(s.outputBytes(command))
+	return strings.TrimSpace(string(s.outputBytes(command)))
 }
 
 func init() {

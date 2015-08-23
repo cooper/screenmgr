@@ -71,6 +71,7 @@ div.header a       { color: #fff;    }
 div.header a:hover { color: #3CB371; }
 
 div.header h1 {
+    position: absolute;
     margin: 0 20px;
     display: inline-block;
     width: 500px;
@@ -97,13 +98,14 @@ div.header div.icon span {
 }
 
 div.header table {
-    width: 250px;
     float: right;
     font-size: 12px;
     border-collapse: collapse;
+    margin-left: 15px;
 }
 
 div.header table tr       { height: 15px;           }
+div.header table td       { padding: 0 6px;         }
 div.header table td.key   { font-weight: bold;      }
 div.header table td.value { font-family: monospace; }
 

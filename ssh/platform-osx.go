@@ -4,27 +4,104 @@ import (
 	"errors"
 	"github.com/DHowett/go-plist"
 	"github.com/cooper/screenmgr/device"
+	"strconv"
 )
 
 const (
-	osxCommandVersion      = "sw_vers -productVersion"
-	osxCommandHardwareInfo = "system_profiler -xml -detailLevel mini SPHardwareDataType"
+	osxCommandVersion      = `sw_vers -productVersion`
+	osxCommandHardwareInfo = `system_profiler -xml -detailLevel mini SPHardwareDataType`
+	osCommandSerialNumber  = `ioreg -c IOPlatformExpertDevice -d 2 | awk -F\" '/IOPlatformSerialNumber/{print $(NF-1)}'`
 )
+
+var osxVersionMap = [...]string{
+	"", "", "", "",
+	"Kodiak",
+	"Puma",          // Darwin 5
+	"Jaguar",        // Darwin 6
+	"Panther",       // Darwin 7
+	"Tiger",         // Darwin 8
+	"Leopard",       // Darwin 9
+	"Snow Leopard",  // Darwin 10
+	"Lion",          // Darwin 11
+	"Mountain Lion", // Darwin 12
+	"Mavericks",     // Darwin 13
+	"Yosemite",      // Darwin 14
+	"El Capitan",    // Darwin 15
+}
 
 func init() {
 	initializers["osx"] = osxInitialize
 }
 
 func osxInitialize(s sshClient) error {
-	dev := s.dev
 
 	// run unix-like commands
 	unixInitialize(s)
 
-	// get OS X version
-	dev.Info.Software["OSVersion"] = s.output(osxCommandVersion)
+	// get OS X version information
+	osxFindVersion(s)
 
 	// extract the hardware info
+	if err := osxFindHardware(s); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var osxSystemProfilerMap = map[string]string{
+	"physical_memory":         "RAM",
+	"bus_speed":               "BusFrequency",
+	"machine_model":           "ModelIdentifier",
+	"machine_name":            "ModelName",
+	"current_processor_speed": "CPUFrequency",
+	"number_cpus":             "CPUCount",
+	"number_processors":       "CPUCount",
+	"cpu_type":                "CPUName",
+
+	// "l2_cache_size":
+	// "l2_cache_core":
+	// "l3_cache":
+	// "boot_rom_version":
+	// "SMC_version_system":
+}
+
+func osxFindVersion(s sshClient) {
+	dev := s.dev
+
+	// get OS X numerical version
+	dev.Info.Software["OSVersion"] = s.output(osxCommandVersion)
+
+	// get OS X name; e.g. "Leopard"
+
+	// determine the major version of Darwin
+	darwinStr := ""
+	for _, c := range dev.Info.Software["KernelVersion"] {
+		if c == '.' {
+			break
+		}
+		darwinStr += string(c)
+	}
+
+	// map Darwin version to OS X release
+	if darwin, err := strconv.ParseUint(darwinStr, 10, 32); err != nil {
+		dev.Warn("failed to parse Darwin version '%s': %s", darwinStr, err)
+	} else {
+		fullName := "OS X "
+		if name := osxVersionMap[darwin]; name != "" {
+			fullName += name
+		} else {
+			fullName += dev.Info.Software["OSVersion"]
+		}
+		dev.Info.Software["OSName"] = fullName
+	}
+
+}
+
+func osxFindHardware(s sshClient) error {
+	dev := s.dev
+
+	// run system profiler
 	data := s.outputBytes(osxCommandHardwareInfo)
 	if data == nil {
 		return errors.New("system profiler failed")
@@ -71,23 +148,6 @@ func osxInitialize(s sshClient) error {
 	return nil
 }
 
-var osxSystemProfilerMap = map[string]string{
-	"physical_memory":         "RAM",
-	"bus_speed":               "BusFrequency",
-	"machine_model":           "ModelIdentifier",
-	"machine_name":            "ModelName",
-	"current_processor_speed": "CPUFrequency",
-	"number_cpus":             "CPUCount",
-	"number_processors":       "CPUCount",
-	"cpu_type":                "CPUName",
-
-	// "l2_cache_size":
-	// "l2_cache_core":
-	// "l3_cache":
-	// "boot_rom_version":
-	// "SMC_version_system":
-}
-
 func osxHandleHardwareMap(dev *device.Device, hw map[string]interface{}) {
 	for key, val := range hw {
 		str, ok := val.(string)
@@ -95,7 +155,7 @@ func osxHandleHardwareMap(dev *device.Device, hw map[string]interface{}) {
 			continue
 		}
 
-		// convert to screenmgr key
+		// convert system profiler key to screenmgr key
 		if newKey, exists := osxSystemProfilerMap[key]; exists {
 			dev.Info.Hardware[newKey] = str
 			dev.Debug("%s = %s", newKey, str)
