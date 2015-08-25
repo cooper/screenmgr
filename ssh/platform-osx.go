@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	osxCommandVersion      = `sw_vers -productVersion`
-	osxCommandHardwareInfo = `system_profiler -xml -detailLevel mini SPHardwareDataType`
-	osCommandSerialNumber  = `ioreg -c IOPlatformExpertDevice -d 2 | awk -F\" '/IOPlatformSerialNumber/{print $(NF-1)}'`
+	osxCmdVersion      = `sw_vers -productVersion`
+	osxCmdHardwareInfo = `system_profiler -xml -detailLevel mini SPHardwareDataType`
+	osxCmdSerialNumber = `ioreg -c IOPlatformExpertDevice -d 2 | awk -F\" '/IOPlatformSerialNumber/{print $(NF-1)}'`
 )
 
 var osxVersionMap = [...]string{
@@ -70,7 +70,7 @@ func osxFindVersion(s sshClient) {
 	dev := s.dev
 
 	// get OS X numerical version
-	dev.Info.Software["OSVersion"] = s.output(osxCommandVersion)
+	dev.Info.Software["OSVersion"] = s.output(osxCmdVersion)
 
 	// get OS X name; e.g. "Leopard"
 
@@ -102,7 +102,7 @@ func osxFindHardware(s sshClient) error {
 	dev := s.dev
 
 	// run system profiler
-	data := s.outputBytes(osxCommandHardwareInfo)
+	data := s.outputBytes(osxCmdHardwareInfo)
 	if data == nil {
 		return errors.New("system profiler failed")
 	}

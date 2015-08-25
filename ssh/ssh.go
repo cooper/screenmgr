@@ -26,6 +26,8 @@ func startDeviceLoop(dev *device.Device) error {
 }
 
 func deviceLoop(dev *device.Device) {
+	// TODO: actually loop on connection drop
+
 	if !dev.Info.SSH.Enabled {
 		return
 	}
@@ -111,6 +113,17 @@ func (s sshClient) outputBytes(command string) []byte {
 // returns stdout
 func (s sshClient) output(command string) string {
 	return strings.TrimSpace(string(s.outputBytes(command)))
+}
+
+// returns exit code
+func (s sshClient) command(command string) error {
+	sess, err := s.client.NewSession()
+	if err != nil {
+		s.dev.Warn("could not create an SSH session")
+		return err
+	}
+	defer s.dev.Debug("`%s`", command)
+	return sess.Run(command)
 }
 
 func init() {

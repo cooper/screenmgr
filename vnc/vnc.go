@@ -59,6 +59,7 @@ VNCLoop:
 		cmd := exec.Command("vncsnapshot",
 			"-passwd", passwd,
 			"-fps", "5",
+			// "-encodings", "raw",
 			"-count", "50",
 			dev.Info.AddrString,
 			dev.GetFilePath("screenshots/screenshot.jpg"),
