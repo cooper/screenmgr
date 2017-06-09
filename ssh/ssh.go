@@ -122,8 +122,16 @@ func (s sshClient) command(command string) error {
 		s.dev.Warn("could not create an SSH session")
 		return err
 	}
-	defer s.dev.Debug("`%s`", command)
-	return sess.Run(command)
+
+	// run command
+	err = sess.Run(command)
+
+	// err != nil if exit code is non-zero
+	s.dev.Debug("`%s`", command)
+	if err != nil {
+		s.dev.Warn("command `%s` failed: %s", command, err)
+	}
+	return err
 }
 
 func init() {
