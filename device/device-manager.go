@@ -34,6 +34,9 @@ func FindDevices() error {
 			continue
 		}
 
+		// write it, just to beautify it
+		dev.WriteInfo()
+
 		// update device
 		updateDevice(dev)
 
