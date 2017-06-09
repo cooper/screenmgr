@@ -9,22 +9,24 @@ import (
 )
 
 type deviceInfo struct {
-	ProductLine string
-	Nickname    string
-	AddrString  string
-	Hardware    map[string]string
-	Software    map[string]string
+	ProductLine string            `json:",omitempty"`
+	Nickname    string            `json:",omitempty"`
+	AddrString  string            `json:",omitempty"`
+	Hardware    map[string]string `json:",omitempty"`
+	Software    map[string]string `json:",omitempty"`
+	Autosave    bool              `json:",omitempty"`
 
 	VNC struct {
-		Enabled  bool
-		Password string
+		Enabled  bool   `json:",omitempty"`
+		Password string `json:",omitempty"`
+		Port     int    `json:",omitempty"`
 	}
 
 	SSH struct {
-		Enabled  bool
-		Username string
-		Password string
-		UsesKey  bool
+		Enabled  bool   `json:",omitempty"`
+		Username string `json:",omitempty"`
+		Password string `json:",omitempty"`
+		UsesKey  bool   `json:",omitempty"`
 	}
 }
 
@@ -95,7 +97,7 @@ func (dev *Device) ReadInfo() error {
 
 // write info to file
 func (dev *Device) WriteInfo() error {
-	json, err := json.Marshal(dev.Info)
+	json, err := json.MarshalIndent(dev.Info, "", "    ")
 	if err != nil {
 		return err
 	}
