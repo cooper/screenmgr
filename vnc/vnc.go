@@ -5,6 +5,7 @@ import "C"
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/cooper/screenmgr/device"
 	"os/exec"
 	"regexp"
@@ -56,12 +57,18 @@ VNCLoop:
 			continue VNCLoop
 		}
 
+		// determine port
+		port := dev.Info.VNC.Port
+		if port == 0 {
+			port = 5900
+		}
+
 		cmd := exec.Command("vncsnapshot",
 			"-passwd", passwd,
 			"-fps", "5",
 			// "-encodings", "raw",
 			"-count", "50",
-			dev.Info.AddrString,
+			fmt.Sprintf("%s:%d", dev.Info.AddrString, port-5900),
 			dev.GetFilePath("screenshots/screenshot.jpg"),
 		)
 
