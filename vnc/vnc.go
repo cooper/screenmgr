@@ -40,13 +40,13 @@ func deviceLoop(dev *device.Device) {
 	C.vncEncryptAndStorePasswd(C.CString(dev.Info.VNC.Password), C.CString(passwd))
 
 	tryLater := func(errStr string) {
-		dev.Warn(errStr + "; waiting 10 seconds")
+		dev.Warn("vnc: " + errStr + "; waiting 10 seconds")
 		time.Sleep(10 * time.Second)
 	}
 
 	// this method will loop so long as the device is
-	// configured to run VNC.
-	dev.Debug("starting VNC loop")
+	// configured to run VNC
+	started := false
 
 VNCLoop:
 	for dev.Info.VNC.Enabled {
@@ -55,6 +55,11 @@ VNCLoop:
 		if !dev.Online {
 			time.Sleep(10 * time.Second)
 			continue VNCLoop
+		}
+
+		if !started {
+			dev.Debug("starting VNC loop")
+			started = true
 		}
 
 		// determine port
@@ -93,7 +98,7 @@ VNCLoop:
 
 		// scanner error
 		if err := scanner.Err(); err != nil {
-			tryLater("Scanner terminated with error: " + err.Error())
+			tryLater("scanner terminated with error: " + err.Error())
 			continue VNCLoop
 		}
 

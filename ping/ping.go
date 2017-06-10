@@ -31,12 +31,14 @@ func deviceLoop(dev *device.Device) {
 
 	// on receive, update last receive time
 	lastTime := time.Now()
+	started := false
 	p.OnRecv = func(addr *net.IPAddr, rtt time.Duration) {
 		dev.Debug("received ICMP packet: addr=%v, rtt=%v", addr, rtt)
 
-		if !dev.Online {
-			dev.Log("now online")
+		if !dev.Online || !started {
+			dev.Log("device is online")
 			dev.Online = true
+			started = true
 		}
 		lastTime = time.Now()
 	}
@@ -50,17 +52,16 @@ func deviceLoop(dev *device.Device) {
 			return
 		}
 
-		if dev.Online {
-			dev.Log("now offline")
+		if dev.Online || !started {
+			dev.Log("device is offline")
 			dev.Online = false
+			started = true
 		}
 	}
 
 	// do this continuously
 	// TODO: if the device is removed or ping is disabled, stop the loop.
-	dev.Debug("starting ICMP loop")
 	p.RunLoop()
-
 }
 
 func init() {

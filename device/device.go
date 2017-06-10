@@ -121,7 +121,7 @@ func (dev *Device) Warn(f string, warning ...interface{}) {
 
 // log debug
 func (dev *Device) Debug(f string, message ...interface{}) {
-	log.Printf("["+dev.DeviceID+"] "+f+"\n", message...)
+	log.Printf("DEBUG ["+dev.DeviceID+"] "+f+"\n", message...)
 }
 
 // find the last screenshot

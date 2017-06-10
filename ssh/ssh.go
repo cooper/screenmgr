@@ -4,6 +4,7 @@ import (
 	"github.com/cooper/screenmgr/device"
 	"golang.org/x/crypto/ssh"
 	"strings"
+	"time"
 )
 
 // convenient for methods involving device + ssh client
@@ -12,7 +13,7 @@ type sshClient struct {
 	client *ssh.Client
 }
 
-// the list of devices with an SSH loop
+// the list of devices with ssh loop
 var devices []*device.Device
 
 // list of initializers for each OS family
@@ -32,29 +33,50 @@ func deviceLoop(dev *device.Device) {
 		return
 	}
 
+	tryLater := func(errStr string) {
+		dev.Warn("ssh: " + errStr + "; waiting 10 seconds")
+		time.Sleep(10 * time.Second)
+	}
+
 	// create ssh config
 	config := &ssh.ClientConfig{
 		User: dev.Info.SSH.Username,
 		Auth: authMethods(dev),
 	}
 
-	// dial
-	// TODO: support other ports
-	client, err := ssh.Dial("tcp", dev.Info.AddrString+":22", config)
-	if err != nil {
-		dev.Warn("ssh dial failed: %v", err)
-		return
+SSHLoop:
+	for dev.Info.SSH.Enabled {
+
+		// not online
+		if !dev.Online {
+			time.Sleep(10 * time.Second)
+			continue SSHLoop
+		}
+
+		// dial
+		// TODO: support other ports
+		addrStr := dev.Info.AddrString + ":22"
+		dev.Debug("connecting ssh " + config.User + "@" + addrStr)
+		client, err := ssh.Dial("tcp", addrStr, config)
+		if err != nil {
+			tryLater("ssh dial failed: " + err.Error())
+			continue SSHLoop
+		}
+
+		dev.Log("ssh authenticated")
+
+		// call initializer for this OS family
+		family := dev.Info.Software["OSFamily"]
+		if handler, exists := initializers[family]; exists {
+			dev.Debug("initializing via ssh for OS family: %s", family)
+			handler(sshClient{dev, client})
+		} else {
+			dev.Debug("no ssh handler for family " + family)
+		}
+
+		err = client.Wait()
+		tryLater(err.Error())
 	}
-
-	dev.Log("SSH connection established")
-
-	// call initializer for this OS family
-	family := dev.Info.Software["OSFamily"]
-	if handler, exists := initializers[family]; exists {
-		dev.Debug("initializing via ssh for OS family: %s", family)
-		handler(sshClient{dev, client})
-	}
-
 }
 
 // returns preferred authentication methods
@@ -77,7 +99,7 @@ func authMethods(dev *device.Device) (methods []ssh.AuthMethod) {
 func (s sshClient) combinedOutputBytes(command string) []byte {
 	sess, err := s.client.NewSession()
 	if err != nil {
-		s.dev.Warn("could not create an SSH session")
+		s.dev.Warn("could not create ssh session: %v", err)
 		return nil
 	}
 	data, err := sess.CombinedOutput(command)
@@ -98,7 +120,7 @@ func (s sshClient) combinedOutput(command string) string {
 func (s sshClient) outputBytes(command string) []byte {
 	sess, err := s.client.NewSession()
 	if err != nil {
-		s.dev.Warn("could not create an SSH session")
+		s.dev.Warn("could not create ssh session")
 		return nil
 	}
 	data, err := sess.Output(command)
@@ -119,7 +141,7 @@ func (s sshClient) output(command string) string {
 func (s sshClient) command(command string) error {
 	sess, err := s.client.NewSession()
 	if err != nil {
-		s.dev.Warn("could not create an SSH session")
+		s.dev.Warn("could not create ssh session")
 		return err
 	}
 
