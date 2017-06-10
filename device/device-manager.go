@@ -24,13 +24,15 @@ func FindDevices() error {
 		return err
 	}
 
+	count := 0
 	for _, fileInfo := range files {
-		log.Printf("found file: %+v\n", fileInfo)
+		count++
 		dev := deviceWithID(fileInfo.Name())
+		dev.Debug("initializing device")
 
 		// read the device info
 		if err := dev.ReadInfo(); err != nil {
-			//reportError("Read JSON info", err)
+			dev.Warn("%v", err)
 			continue
 		}
 
@@ -39,9 +41,13 @@ func FindDevices() error {
 
 		// update device
 		updateDevice(dev)
-
 	}
 
+	if count == 0 {
+		log.Fatal("no devices configured")
+	} else {
+		log.Printf("looking for %d devices", count)
+	}
 	return nil
 }
 

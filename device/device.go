@@ -35,6 +35,9 @@ type Device struct {
 	Info           deviceInfo
 	LastScreenshot string
 	Online         bool
+
+	SSHRunning bool
+	VNCRunning bool
 }
 
 // create a new device and a directory for it

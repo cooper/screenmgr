@@ -1,6 +1,7 @@
 # screenmgr
 
 **screenmgr** is a tool for managing and monitoring a pool of networked devices.
+
 with it, you can
 
 * monitor uptime/reachability via ping (ICMP)

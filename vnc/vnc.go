@@ -24,10 +24,11 @@ func startDeviceLoop(dev *device.Device) {
 func deviceLoop(dev *device.Device) {
 
 	// first check that it's enabled
-	if !dev.Info.VNC.Enabled {
-		dev.Warn("Attempted to start VNC loop, but VNC is disabled")
+	if !dev.Info.VNC.Enabled || dev.VNCRunning {
 		return
 	}
+
+	dev.VNCRunning = true
 
 	// check that there's a password
 	if len(dev.Info.VNC.Password) == 0 {
@@ -110,6 +111,7 @@ VNCLoop:
 
 	}
 
+	dev.VNCRunning = false
 }
 
 func handleVNCSnapshotOutput(dev *device.Device, line string) {

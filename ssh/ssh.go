@@ -29,9 +29,11 @@ func startDeviceLoop(dev *device.Device) error {
 func deviceLoop(dev *device.Device) {
 	// TODO: actually loop on connection drop
 
-	if !dev.Info.SSH.Enabled {
+	if !dev.Info.SSH.Enabled || dev.SSHRunning {
 		return
 	}
+
+	dev.SSHRunning = true
 
 	tryLater := func(errStr string) {
 		dev.Warn("ssh: " + errStr + "; waiting 10 seconds")
@@ -77,6 +79,8 @@ SSHLoop:
 		err = client.Wait()
 		tryLater(err.Error())
 	}
+
+	dev.SSHRunning = false
 }
 
 // returns preferred authentication methods
