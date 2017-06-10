@@ -8,9 +8,15 @@ import (
 	_ "github.com/cooper/screenmgr/ssh"
 	_ "github.com/cooper/screenmgr/vnc"
 	"log"
+	"flag"
 )
 
+var debug *bool
+
 func main() {
+	debug = flag.Bool("debug", false, "enable debug logging")
+	flag.Parse()
+	device.Debug = *debug
 	checkError("Find devices", device.FindDevices())
 	checkError("Setup devices", device.SetupDevices())
 	checkError("Run HTTP server", httpserver.Run())

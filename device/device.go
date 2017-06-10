@@ -8,6 +8,8 @@ import (
 	"os"
 )
 
+var Debug bool
+
 type deviceInfo struct {
 	ProductLine string            `json:",omitempty"`
 	Nickname    string            `json:",omitempty"`
@@ -124,6 +126,9 @@ func (dev *Device) Warn(f string, warning ...interface{}) {
 
 // log debug
 func (dev *Device) Debug(f string, message ...interface{}) {
+	if !Debug {
+		return
+	}
 	log.Printf("DEBUG ["+dev.DeviceID+"] "+f+"\n", message...)
 }
 
