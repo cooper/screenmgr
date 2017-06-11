@@ -120,7 +120,8 @@ func handleVNCSnapshotOutput(dev *device.Device, line string) {
 	if len(found) == 0 {
 		return
 	}
-	dev.LastScreenshot = found
+	dev.LastScreenshot.File = found
+	dev.LastScreenshot.Time = time.Now()
 	dev.Debug("updated screenshot: %s", found)
 }
 

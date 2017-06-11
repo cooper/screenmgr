@@ -33,7 +33,10 @@
             <img src="devices/{{.DeviceID}}/screenshots/{{$lastScreenshot}}" alt="{{.DeviceID}}" class="screenshot{{if $offline}} offline{{end}}" />
             {{if $offline}}
                 <div class="screenshot-overlay"></div>
-                <div class="last-seen">Last seen A VERY<br />LONG TIME AGO</div>
+                <div class="last-seen">
+                        Last seen<br/>
+                        {{.LastScreenshot.Time.Format "2 Jan 2006 3:04 PM"}}
+                </div>
             {{end}}
         </div>
     {{end}}

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 )
 
 var Debug bool
@@ -35,9 +36,11 @@ type deviceInfo struct {
 type Device struct {
 	DeviceID       string
 	Info           deviceInfo
-	LastScreenshot string
-	Online         bool
-
+	LastScreenshot struct {
+		Time time.Time
+		File string
+	}
+	Online     bool
 	SSHRunning bool
 	VNCRunning bool
 }
@@ -136,8 +139,8 @@ func (dev *Device) Debug(f string, message ...interface{}) {
 func (dev *Device) GetLastScreenshot() string {
 
 	// this is easy
-	if dev.LastScreenshot != "" {
-		return dev.LastScreenshot
+	if dev.LastScreenshot.File != "" {
+		return dev.LastScreenshot.File
 	}
 
 	// find screenshots
@@ -148,16 +151,19 @@ func (dev *Device) GetLastScreenshot() string {
 
 	// find most recent
 	var currentFile os.FileInfo
+	var currentTime time.Time
 	var currentName string
 	for _, file := range files {
 		if currentFile == nil || file.ModTime().After(currentFile.ModTime()) {
 			currentFile = file
 			currentName = currentFile.Name()
+			currentTime = file.ModTime()
 		}
 	}
 
 	// cache this
-	dev.LastScreenshot = currentName
+	dev.LastScreenshot.File = currentName
+	dev.LastScreenshot.Time = currentTime
 
 	return currentName
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	_ "github.com/cooper/screenmgr/agent"
 	"github.com/cooper/screenmgr/device"
 	"github.com/cooper/screenmgr/httpserver"
@@ -8,7 +9,6 @@ import (
 	_ "github.com/cooper/screenmgr/ssh"
 	_ "github.com/cooper/screenmgr/vnc"
 	"log"
-	"flag"
 )
 
 var debug *bool
