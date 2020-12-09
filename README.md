@@ -2,7 +2,7 @@
 
 **screenmgr** is a tool for managing and monitoring a pool of networked devices.
 
-with it, you can
+With it, you can
 
 * monitor uptime/reachability via ping (ICMP)
 * boot (WOL), shutdown, restart, or commit other device actions (SSH)
@@ -11,12 +11,18 @@ with it, you can
 
 ![screenmgr](http://i.imgur.com/YcH2aFO.jpg)
 
-I made this mostly so I could monitor my collection of Power Macs. it originally
-only supported Mac OS 8/9/X, but it now supports other unix-like operating
-systems as well as windows to some extent.
+I made this mostly so I could monitor my collection of Power Macs. It originally
+only supported Mac OS 8/9/X, but it now supports other UNIX-like operating
+systems, as well as Windows to some extent.
 
-basically it checks for a variety of protocols on each device and tries to
-find as much info as it can to show on the web interface. the availability of
+It checks for a variety of protocols on each device and tries to
+find as much info as it can to show on the web interface. The availability of
 each feature depends on the platform.
 
-more features/OS support planned.
+## License
+
+[ISC](LICENSE)
+
+## Author
+
+[Mitchell Cooper](https://mitchellcooper.me), <mitchell@mitchellcooper.me>
